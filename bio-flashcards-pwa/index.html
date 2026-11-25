@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grade 12 Biology – Unit 1 & 2 Test</title>
+<meta name="color-scheme" content="dark">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0f1115;--surface:#181b22;--surface2:#20242d;--border:#2c313c;
+  --text:#e8eaed;--muted:#9aa0ab;--accent:#7aa2ff;--accent-ink:#0b1020;
+  --good:#3ddc97;--good-bg:#12302388;--bad:#ff6b6b;--bad-bg:#3a1a1c88;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5}
+#app{max-width:760px;margin:0 auto;padding:16px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;color:var(--muted);margin-bottom:10px}
+.bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 22px 22px}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.topic{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.icons{display:flex;gap:8px;flex-shrink:0}
+h1{font-size:26px;margin:0 0 8px}
+h2{font-size:21px;line-height:1.4;margin:0 0 18px;font-weight:600}
+p{margin:0 0 14px;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;text-align:left;width:100%;font:inherit;font-size:17px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:13px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt b{color:var(--accent);min-width:1.4em}
+.opt.good{background:var(--good-bg);border-color:var(--good)}
+.opt.good b{color:var(--good)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad)}
+.opt.bad b{color:var(--bad)}
+.opt.dim{opacity:.55}
+.btn{font:inherit;font-size:17px;font-weight:600;padding:13px 20px;border-radius:12px;border:0;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.ib{width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;flex-shrink:0}
+.ib:hover:not(:disabled){border-color:var(--accent)}
+.ib:disabled{opacity:.35;cursor:default}
+.ib.next{width:50px;height:50px;border:0;background:var(--accent);color:var(--accent-ink)}
+.ib.next.good{background:var(--good)}
+.ib.next.bad{background:var(--bad)}
+.ib.next:disabled{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.ib.next:hover:not(:disabled){filter:brightness(1.1)}
+.cfoot{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:18px;min-height:50px}
+.stats{display:flex;gap:12px;margin:18px 0}
+.stat{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.stat b{display:block;font-size:24px}
+.stat span{font-size:13px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin-top:14px}
+/* explanation sheet (overlay, so the card never changes size) */
+#sheet[hidden]{display:none}
+#sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:#000a}
+.sheet-in{width:100%;max-width:760px;max-height:75%;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px 22px calc(22px + env(safe-area-inset-bottom,0px))}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:700;font-size:18px}
+.step{margin:10px 0;font-size:16px}
+.note{margin-top:12px;font-size:15px;font-style:italic;color:var(--muted)}
+.ans-line{color:var(--good);font-weight:700;margin-bottom:6px}
+</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f1115">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bio Test">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet" hidden><div class="sheet-in">
+  <div class="sheet-h"><span>Explanation</span><button class="ib" id="sheetx" aria-label="Close explanation" title="Close"></button></div>
+  <div id="sheetbody"></div>
+</div></div>
+
+<script src="/questions.js"></script>
+<script>
+
+const LET = ['A','B','C','D'];
+const SV = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const ICON = {
+  eye: SV + '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  bulb: SV + '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.3 1 2.3h6c0-1 .3-1.7 1-2.3A7 7 0 0 0 12 2z"/></svg>',
+  next: SV + '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>',
+  close: SV + '<path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+const app = document.getElementById('app');
+const sheet = document.getElementById('sheet');
+document.getElementById('sheetx').innerHTML = ICON.close;
+let idx = 0, attempts = 1, answered = false, wrong = false;
+let cur = { order: [0,1,2,3], map: {A:'A',B:'B',C:'C',D:'D'}, correct: 0 };
+function shuffled(){
+  const a = [0,1,2,3];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+// explanations refer to the original letters; rewrite them to the shuffled ones
+function fmtLetters(ls){
+  if (ls.length === 1) return ls[0];
+  if (ls.length === 2) return ls[0] + ' and ' + ls[1];
+  return ls.slice(0, -1).join(', ') + ' and ' + ls[ls.length - 1];
+}
+function remap(t){
+  return t.replace(/\{\{([A-D,]+)\}\}/g, function(_, g){
+    return fmtLetters(g.split(',').map(function(l){ return cur.map[l]; }).sort());
+  });
+}
+let best = 0;
+try { best = parseInt(localStorage.getItem('bio-best') || '0', 10) || 0; } catch (e) {}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function saveBest(n){
+  if (n > best) { best = n; try { localStorage.setItem('bio-best', String(n)); } catch (e) {} }
+}
+function closeSheet(){ sheet.hidden = true; }
+function openSheet(){
+  const d = Q[idx];
+  document.getElementById('sheetbody').innerHTML =
+    '<div class="ans-line">Answer: ' + LET[cur.correct] + '</div>' +
+    d.steps.map(function(s, i){
+      return '<div class="step">' + (i + 1) + ': ' + remap(esc(s[0])) + '; ' + remap(esc(s[1])) + '</div>';
+    }).join('') + (d.note ? '<div class="note">' + remap(esc(d.note)) + '</div>' : '');
+  sheet.hidden = false;
+}
+sheet.addEventListener('click', function(e){ if (e.target === sheet) closeSheet(); });
+document.getElementById('sheetx').onclick = closeSheet;
+
+function startScreen(){
+  closeSheet();
+  app.innerHTML =
+    '<div class="card">' +
+    '<h1>Grade 12 Biology</h1>' +
+    '<p>Unit 1 and Unit 2 · ' + Q.length + ' questions</p>' +
+    '<p style="color:var(--text)">Answer every question correctly in a row. <b style="color:var(--bad)">A wrong answer, or revealing the answer, sends you back to Question 1.</b></p>' +
+    '<div class="stats"><div class="stat"><b>' + best + '</b><span>Furthest question reached</span></div></div>' +
+    '<div class="row"><button class="btn" id="start">Start test</button></div>' +
+    '<div class="hint">Tip: press A–D (or 1–4) to answer, Enter to continue.</div>' +
+    '</div>';
+  document.getElementById('start').onclick = function(){ idx = 0; attempts = 1; renderQ(); };
+}
+
+function renderQ(){
+  const d = Q[idx];
+  answered = false; wrong = false;
+  const order = shuffled();            // order[k] = original option index shown at slot k
+  const map = {};                      // original letter -> letter shown now
+  order.forEach(function(orig, k){ map[LET[orig]] = LET[k]; });
+  cur = { order: order, map: map, correct: order.indexOf(LET.indexOf(d.ans)) };
+  closeSheet();
+  app.innerHTML =
+    '<div class="top"><span>Question <b style="color:var(--text)">' + (idx + 1) + '</b> of ' + Q.length + '</span><span>Attempt ' + attempts + '</span></div>' +
+    '<div class="bar"><i style="width:' + (idx / Q.length * 100) + '%"></i></div>' +
+    '<div class="card">' +
+    '<div class="chead"><div class="topic">' + esc(d.topic) + '</div>' +
+    '<div class="icons">' +
+      '<button class="ib" id="peek" title="Reveal answer (counts as wrong)" aria-label="Reveal answer">' + ICON.eye + '</button>' +
+      '<button class="ib" id="explain" title="Explanation" aria-label="Explanation" disabled>' + ICON.bulb + '</button>' +
+    '</div></div>' +
+    '<h2>' + esc(d.text) + '</h2>' +
+    '<div class="opts">' + order.map(function(orig, k){
+      return '<button class="opt" data-i="' + k + '"><b>' + LET[k] + '</b><span>' + esc(d.opts[orig]) + '</span></button>';
+    }).join('') + '</div>' +
+    '<div class="cfoot">' +
+    '<button class="ib next" id="next" title="Next question" aria-label="Next question" disabled>' + ICON.next + '</button></div>' +
+    '</div>';
+  app.querySelectorAll('.opt').forEach(function(b){
+    b.onclick = function(){ resolve(parseInt(b.dataset.i, 10)); };
+  });
+  document.getElementById('peek').onclick = function(){ resolve(-1); };
+  document.getElementById('explain').onclick = openSheet;
+  document.getElementById('next').onclick = goNext;
+  window.scrollTo(0, 0);
+}
+
+// i = chosen option index, or -1 when the answer was revealed (counts as wrong)
+function resolve(i){
+  if (answered) return;
+  answered = true;
+  const d = Q[idx];
+  const correctIdx = cur.correct;
+  const right = i === correctIdx;
+  wrong = !right;
+  app.querySelectorAll('.opt').forEach(function(b, k){
+    b.disabled = true;
+    if (k === correctIdx) b.classList.add('good');
+    else if (k === i) b.classList.add('bad');
+    else b.classList.add('dim');
+  });
+  const nx = document.getElementById('next');
+  document.getElementById('peek').disabled = true;
+  document.getElementById('explain').disabled = false;
+  nx.disabled = false;
+  if (right) {
+    saveBest(idx + 1);
+    nx.classList.add('good');
+    nx.title = nx.ariaLabel = idx === Q.length - 1 ? 'Finish' : 'Next question';
+  } else {
+    saveBest(idx);
+    nx.classList.add('bad');
+    nx.title = 'Back to Question 1'; nx.setAttribute('aria-label', 'Back to Question 1');
+  }
+  nx.focus();
+}
+
+function goNext(){
+  if (!answered) return;
+  if (wrong) { idx = 0; attempts++; renderQ(); return; }
+  if (idx === Q.length - 1) return finish();
+  idx++; renderQ();
+}
+
+function finish(){
+  app.innerHTML =
+    '<div class="card"><h1>You did it 🎉</h1>' +
+    '<p style="color:var(--text)">All ' + Q.length + ' questions in a row.</p>' +
+    '<div class="stats"><div class="stat"><b>' + attempts + '</b><span>' + (attempts === 1 ? 'Attempt' : 'Attempts') + '</span></div>' +
+    '<div class="stat"><b>' + Q.length + '</b><span>Questions</span></div></div>' +
+    '<div class="row"><button class="btn" id="again">Go again</button></div></div>';
+  document.getElementById('again').onclick = startScreen;
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') { closeSheet(); return; }
+  if (!document.getElementById('next') || !sheet.hidden) return;
+  const k = e.key.toLowerCase();
+  if (!answered) {
+    let i = 'abcd'.indexOf(k);
+    if (i < 0) i = '1234'.indexOf(k);
+    if (i >= 0 && k.length === 1) resolve(i);
+  } else if (k === 'enter' || k === 'arrowright') {
+    e.preventDefault(); goNext();
+  }
+});
+
+startScreen();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
