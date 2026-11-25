@@ -20,8 +20,11 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5}
 #app{max-width:760px;margin:0 auto;padding:16px 18px 40px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;color:var(--muted);margin-bottom:10px}
-.bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.cp-tag{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:1px 7px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-size:11px;font-weight:600;vertical-align:middle}
+.cp-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.bar{position:relative;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:22px}
 .bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.bar .cp-tick{position:absolute;top:0;bottom:0;width:2px;background:var(--text);opacity:.35;pointer-events:none}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 22px 22px}
 .chead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
 .topic{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
@@ -97,6 +100,31 @@ const sheet = document.getElementById('sheet');
 document.getElementById('sheetx').innerHTML = ICON.close;
 let idx = 0, attempts = 1, answered = false, wrong = false;
 let cur = { order: [0,1,2,3], map: {A:'A',B:'B',C:'C',D:'D'}, correct: 0 };
+
+const CHECKPOINTS = [];
+for (let cp = 5; cp <= 110; cp += 5) CHECKPOINTS.push(cp);
+
+function isCheckpointQ(qNum){
+  return qNum >= 5 && qNum <= 110 && qNum % 5 === 0;
+}
+
+// Returns 0-based index to reset to for current 0-based question index i
+function getResetIdx(i){
+  const qNum = i + 1;
+  let cp = Math.floor(qNum / 5) * 5;
+  if (cp > 110) cp = 110;
+  const targetQ = cp >= 5 ? cp : 1;
+  return targetQ - 1;
+}
+
+function checkpointTicksHtml(){
+  if (!Q.length) return '';
+  return CHECKPOINTS.filter(function(cp){ return cp <= Q.length; }).map(function(cp){
+    const pct = ((cp - 1) / Q.length * 100);
+    return '<span class="cp-tick" style="left:' + pct + '%" title="Checkpoint ' + cp + '"></span>';
+  }).join('');
+}
+
 function shuffled(){
   const a = [0,1,2,3];
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
@@ -149,15 +177,17 @@ function startScreen(){
 
 function renderQ(){
   const d = Q[idx];
+  const qNum = idx + 1;
   answered = false; wrong = false;
   const order = shuffled();            // order[k] = original option index shown at slot k
   const map = {};                      // original letter -> letter shown now
   order.forEach(function(orig, k){ map[LET[orig]] = LET[k]; });
   cur = { order: order, map: map, correct: order.indexOf(LET.indexOf(d.ans)) };
+  const cpBadge = isCheckpointQ(qNum) ? '<span class="cp-tag" title="Checkpoint">CP</span>' : '';
   closeSheet();
   app.innerHTML =
-    '<div class="top"><span>Question <b style="color:var(--text)">' + (idx + 1) + '</b> of ' + Q.length + '</span><span>Attempt ' + attempts + '</span></div>' +
-    '<div class="bar"><i style="width:' + (idx / Q.length * 100) + '%"></i></div>' +
+    '<div class="top"><span>Question <b style="color:var(--text)">' + qNum + '</b> of ' + Q.length + cpBadge + '</span><span>Attempt ' + attempts + '</span></div>' +
+    '<div class="bar"><i style="width:' + (idx / Q.length * 100) + '%"></i>' + checkpointTicksHtml() + '</div>' +
     '<div class="card">' +
     '<div class="chead"><div class="topic">' + esc(d.topic) + '</div>' +
     '<div class="icons">' +
@@ -204,15 +234,17 @@ function resolve(i){
     nx.title = nx.ariaLabel = idx === Q.length - 1 ? 'Finish' : 'Next question';
   } else {
     saveBest(idx);
+    const resetQ = getResetIdx(idx) + 1;
     nx.classList.add('bad');
-    nx.title = 'Back to Question 1'; nx.setAttribute('aria-label', 'Back to Question 1');
+    nx.title = 'Back to Question ' + resetQ;
+    nx.setAttribute('aria-label', 'Back to Question ' + resetQ);
   }
   nx.focus();
 }
 
 function goNext(){
   if (!answered) return;
-  if (wrong) { idx = 0; attempts++; renderQ(); return; }
+  if (wrong) { idx = getResetIdx(idx); attempts++; renderQ(); return; }
   if (idx === Q.length - 1) return finish();
   idx++; renderQ();
 }
